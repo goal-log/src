@@ -1,0 +1,200 @@
+.detail-layout {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #2563eb;
+  font-weight: 700;
+  margin-bottom: 24px;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.back-btn:hover { text-decoration: underline; }
+
+/* 메타 카드 */
+.detail-meta-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 14px rgba(37, 99, 235, 0.08);
+  border: 1px solid #dbeafe;
+  margin-bottom: 18px;
+}
+
+.detail-meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detail-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.badge-category {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-priority {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.badge-priority.HIGH   { background: #fee2e2; color: #dc2626; }
+.badge-priority.MEDIUM { background: #fef3c7; color: #b45309; }
+.badge-priority.LOW    { background: #e0f2fe; color: #0369a1; }
+
+.badge-status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.badge-status.IN_PROGRESS { background: #dbeafe; color: #1d4ed8; }
+.badge-status.COMPLETED   { background: #bfdbfe; color: #1e40af; }
+.badge-status.PAUSED      { background: #e0e7ff; color: #4338ca; }
+
+.detail-meta-card h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e2a4a;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.detail-description {
+  font-size: 15px;
+  color: #6b84b8;
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+
+.detail-deadline {
+  font-size: 13px;
+  color: #93a8d4;
+}
+
+/* 진행률 카드 */
+.detail-progress-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 30px;
+  box-shadow: 0 2px 14px rgba(37, 99, 235, 0.08);
+  border: 1px solid #dbeafe;
+}
+
+.detail-progress-card h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b6cb7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 22px;
+}
+
+.progress-main {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* 큰 링 */
+.big-ring-wrap {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.big-ring-wrap svg { transform: rotate(-90deg); }
+.big-ring-bg { fill: none; stroke: #e8eeff; stroke-width: 8; }
+
+.big-ring-fill {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.big-ring-fill.completed { stroke: #3b82f6; }
+.big-ring-fill.paused    { stroke: #93c5fd; }
+
+.big-ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e2a4a;
+  line-height: 1;
+}
+
+.big-ring-label span {
+  font-size: 11px;
+  font-weight: 500;
+  color: #93a8d4;
+  margin-top: 2px;
+}
+
+.progress-detail { flex: 1; }
+
+.progress-bar-track {
+  background: #e8eeff;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #2563eb;
+  transition: width 0.6s ease;
+}
+
+.progress-bar-fill.completed { background: #3b82f6; }
+.progress-bar-fill.paused    { background: #93c5fd; }
+
+.progress-numbers { display: flex; gap: 28px; }
+
+.prog-num { display: flex; flex-direction: column; gap: 3px; }
+
+.prog-num .num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e2a4a;
+}
+
+.prog-num .lbl {
+  font-size: 12px;
+  color: #93a8d4;
+}
+
+.loading {
+  text-align: center;
+  padding: 80px;
+  color: #93a8d4;
+}
