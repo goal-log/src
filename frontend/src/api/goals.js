@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import api from './axios';
 
 export const getGoals = () =>
@@ -18,8 +17,3 @@ export const deleteGoal = (id) =>
 
 export const getGoalProgress = (id) =>
   api.get(`/api/goals/${id}/progress`);
-=======
-import request from './client'
-
-export const getGoals = () => request('/api/goals')
->>>>>>> 3a9def47da66385a4d243b883b64bbc008a99adb
