@@ -4,7 +4,7 @@ import { getGoals, createGoal, updateGoal, deleteGoal } from '../api/goals';
 import { MOCK_GOALS, MOCK_PROGRESS, CATEGORIES, PRIORITIES, STATUSES } from '../api/mock';
 import './GoalListPage.css';
 
-const MOCK_MODE = true;
+const MOCK_MODE = false;
 
 const EMPTY_FORM = {
   title: '', description: '', deadline: '',
@@ -84,8 +84,8 @@ export default function GoalListPage() {
 
   async function fetchGoals() {
     try {
-      const res = await getGoals();
-      setGoals(res.data.data);
+      const data = await getGoals();
+      setGoals(Array.isArray(data) ? data : []);
     } catch {
       navigate('/login');
     } finally {
@@ -125,16 +125,18 @@ export default function GoalListPage() {
     return list;
   }, [goals, filterCategory, filterStatus, sortBy, progressMap]);
 
-  function handleCreate(e) {
+  async function handleCreate(e) {
     e.preventDefault();
     setFormError('');
     if (!form.title.trim()) { setFormError('제목을 입력해주세요.'); return; }
-    if (MOCK_MODE) {
-      const newGoal = { id: Date.now(), ...form, createdAt: new Date().toISOString() };
+    try {
+      const newGoal = await createGoal(form);
       setGoals([...goals, newGoal]);
       setProgressMap({ ...progressMap, [newGoal.id]: { totalTasks: 0, completedTasks: 0, progressPercent: 0 } });
       setForm(EMPTY_FORM);
       setShowForm(false);
+    } catch {
+      setFormError('목표 저장에 실패했습니다.');
     }
   }
 
@@ -147,19 +149,25 @@ export default function GoalListPage() {
     });
   }
 
-  function handleUpdate(e, id) {
+  async function handleUpdate(e, id) {
     e.preventDefault();
     if (!editForm.title.trim()) return;
-    if (MOCK_MODE) {
-      setGoals(goals.map(g => g.id === id ? { ...g, ...editForm } : g));
+    try {
+      const updated = await updateGoal(id, editForm);
+      setGoals(goals.map(g => g.id === id ? updated : g));
       setEditingId(null);
+    } catch {
+      setFormError('목표 수정에 실패했습니다.');
     }
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     if (!window.confirm('목표를 삭제할까요?')) return;
-    if (MOCK_MODE) {
+    try {
+      await deleteGoal(id);
       setGoals(goals.filter(g => g.id !== id));
+    } catch {
+      alert('목표 삭제에 실패했습니다.');
     }
   }
 

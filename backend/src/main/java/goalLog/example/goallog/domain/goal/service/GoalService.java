@@ -36,6 +36,9 @@ public class GoalService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .deadline(request.getDeadline())
+                .category(request.getCategory())
+                .priority(request.getPriority())
+                .status(request.getStatus())
                 .build();
 
         return new GoalResponse(goalRepository.save(goal));
@@ -61,7 +64,8 @@ public class GoalService {
     @Transactional
     public GoalResponse update(String email, Long goalId, GoalUpdateRequest request) {
         LongTermGoal goal = getGoal(email, goalId);
-        goal.update(request.getTitle(), request.getDescription(), request.getDeadline());
+        goal.update(request.getTitle(), request.getDescription(), request.getDeadline(),
+                request.getCategory(), request.getPriority(), request.getStatus());
         return new GoalResponse(goal);
     }
 

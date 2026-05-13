@@ -13,14 +13,19 @@ public class GoalResponse {
     private String title;
     private String description;
     private LocalDate deadline;
+    private String category;
+    private String priority;
+    private String status;
     private LocalDateTime createdAt;
 
-    // 엔티티를 DTO로 변환
     public GoalResponse(LongTermGoal goal) {
         this.id = goal.getId();
         this.title = goal.getTitle();
         this.description = goal.getDescription();
         this.deadline = goal.getDeadline();
+        this.category = goal.getCategory();
+        this.priority = goal.getPriority();
+        this.status = goal.getStatus();
         this.createdAt = goal.getCreatedAt();
     }
 }
