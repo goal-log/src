@@ -82,6 +82,7 @@ export default function DailyPlanPage() {
           <div className="page-error">
             <p>{error}</p>
             <button className="retry-btn" onClick={fetchPlan}>다시 시도</button>
+            <button className="retry-btn" onClick={fetchPlan}>다시 시도</button>
           </div>
         )}
 

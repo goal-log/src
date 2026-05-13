@@ -29,12 +29,18 @@ public class PlanController {
         return ApiResponse.success(planService.create(userDetails.getUsername(), request));
     }
 
-    // 날짜로 조회 - GET /api/plans?date=2025-04-14
     @GetMapping
     public ApiResponse<PlanResponse> getByDate(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ApiResponse.success(planService.getByDate(userDetails.getUsername(), date));
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<PlanResponse> getOne(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+        return ApiResponse.success(planService.getById(userDetails.getUsername(), id));
     }
 
     @GetMapping("/all")
@@ -51,7 +57,6 @@ public class PlanController {
         return ApiResponse.success(null);
     }
 
-    // 태스크 추가
     @PostMapping("/{planId}/tasks")
     public ApiResponse<TaskResponse> addTask(
             @AuthenticationPrincipal UserDetails userDetails,
