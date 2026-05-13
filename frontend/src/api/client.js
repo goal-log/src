@@ -1,5 +1,5 @@
 async function request(path, options = {}) {
-  const token = localStorage.getItem('accessToken')
+  const token = localStorage.getItem('token')
   const headers = { 'Content-Type': 'application/json', ...options.headers }
   if (token) headers.Authorization = `Bearer ${token}`
 
