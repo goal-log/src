@@ -1,15 +1,10 @@
 import request from './client'
 
-export const getDailyPlans = (params = {}) => {
-  const qs = new URLSearchParams(params).toString()
-  return request(`/api/daily-plans${qs ? `?${qs}` : ''}`)
-}
+export const getPlanByDate = (date) =>
+  request(`/api/plans?date=${date}`)
 
-export const createDailyPlan = (data) =>
-  request('/api/daily-plans', { method: 'POST', body: JSON.stringify(data) })
+export const createPlan = (date, longTermGoalId = null) =>
+  request('/api/plans', { method: 'POST', body: JSON.stringify({ date, longTermGoalId }) })
 
-export const completeDailyPlan = (id) =>
-  request(`/api/daily-plans/${id}/complete`, { method: 'PATCH' })
-
-export const deleteDailyPlan = (id) =>
-  request(`/api/daily-plans/${id}`, { method: 'DELETE' })
+export const deletePlan = (id) =>
+  request(`/api/plans/${id}`, { method: 'DELETE' })
