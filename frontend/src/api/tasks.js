@@ -1,15 +1,13 @@
-import request from './client'
+import api from './axios';
 
-export const getTasks = (params = {}) => {
-  const qs = new URLSearchParams(params).toString()
-  return request(`/api/tasks${qs ? `?${qs}` : ''}`)
-}
+// POST /api/plans/{planId}/tasks → { title } → 생성된 task 객체
+export const createTask = (planId, title) =>
+  api.post(`/api/plans/${planId}/tasks`, { title }).then((res) => res.data.data);
 
-export const createTask = (data) =>
-  request('/api/tasks', { method: 'POST', body: JSON.stringify(data) })
+// PATCH /api/tasks/{id}/toggle → 완료 상태 토글 → 업데이트된 task 객체
+export const toggleTask = (id) =>
+  api.patch(`/api/tasks/${id}/toggle`).then((res) => res.data.data);
 
-export const completeTask = (id) =>
-  request(`/api/tasks/${id}/complete`, { method: 'PATCH' })
-
+// DELETE /api/tasks/{id}
 export const deleteTask = (id) =>
-  request(`/api/tasks/${id}`, { method: 'DELETE' })
+  api.delete(`/api/tasks/${id}`).then(() => null);

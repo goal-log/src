@@ -19,7 +19,11 @@
   transition: all 0.15s;
 }
 
-.task-check:hover:not(:disabled) {
+.task-check:hover {
+  opacity: 0.8;
+}
+
+.task-item:not(.done) .task-check:hover {
   border-color: #4f6ef7;
   background: #eff2fe;
 }

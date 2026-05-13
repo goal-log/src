@@ -1,15 +1,23 @@
-import request from './client'
+import api from './axios';
 
-export const getDailyPlans = (params = {}) => {
-  const qs = new URLSearchParams(params).toString()
-  return request(`/api/daily-plans${qs ? `?${qs}` : ''}`)
-}
+// GET /api/plans?date=YYYY-MM-DD → 단일 plan 객체, 없으면 null (404)
+export const getPlanByDate = (date) =>
+  api.get('/api/plans', { params: { date } })
+    .then((res) => res.data.data)
+    .catch((err) => {
+      if (err.response?.status === 404) return null;
+      throw err;
+    });
 
-export const createDailyPlan = (data) =>
-  request('/api/daily-plans', { method: 'POST', body: JSON.stringify(data) })
+// GET /api/plans/all → 전체 plan 목록
+export const getAllPlans = () =>
+  api.get('/api/plans/all').then((res) => res.data.data);
 
-export const completeDailyPlan = (id) =>
-  request(`/api/daily-plans/${id}/complete`, { method: 'PATCH' })
+// POST /api/plans → { date, longTermGoalId? } → plan 객체
+// 같은 날짜에 이미 plan이 있으면 기존 plan 반환 (idempotent)
+export const createPlan = (data) =>
+  api.post('/api/plans', data).then((res) => res.data.data);
 
-export const deleteDailyPlan = (id) =>
-  request(`/api/daily-plans/${id}`, { method: 'DELETE' })
+// DELETE /api/plans/{id}
+export const deletePlan = (id) =>
+  api.delete(`/api/plans/${id}`).then(() => null);

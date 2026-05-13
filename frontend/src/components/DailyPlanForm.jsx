@@ -1,33 +1,25 @@
-import { useState, useEffect } from 'react'
-import { getGoals } from '../api/goals'
-import { createDailyPlan } from '../api/dailyPlans'
-import './DailyPlanForm.css'
+import { useState } from 'react';
+import { createPlan } from '../api/dailyPlans';
+import './DailyPlanForm.css';
 
-export default function DailyPlanForm({ date, onCreated, onClose }) {
-  const [goals, setGoals] = useState([])
-  const [goalId, setGoalId] = useState('')
-  const [title, setTitle] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState(null)
-
-  useEffect(() => {
-    getGoals().then(setGoals).catch(() => {})
-  }, [])
+export default function DailyPlanForm({ date, goals, onCreated, onClose }) {
+  const [goalId, setGoalId] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setSubmitError(null)
-    setSubmitting(true)
+    e.preventDefault();
+    setSubmitError(null);
+    setSubmitting(true);
     try {
-      const body = { title: title.trim(), date }
-      if (goalId) body.goalId = Number(goalId)
-      const plan = await createDailyPlan(body)
-      const selectedGoal = goals.find((g) => g.id === Number(goalId))
-      onCreated({ ...plan, goalTitle: selectedGoal?.title ?? '' })
+      const body = { date };
+      if (goalId) body.longTermGoalId = Number(goalId);
+      const plan = await createPlan(body);
+      onCreated(plan);
     } catch (err) {
-      setSubmitError(err.message || '저장에 실패했습니다.')
+      setSubmitError(err.response?.data?.message || '저장에 실패했습니다.');
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
@@ -35,7 +27,7 @@ export default function DailyPlanForm({ date, onCreated, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>오늘의 계획 추가</h2>
+          <h2>오늘의 계획 만들기</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
@@ -54,28 +46,16 @@ export default function DailyPlanForm({ date, onCreated, onClose }) {
             </select>
           </label>
 
-          <label className="form-label">
-            계획 제목
-            <input
-              type="text"
-              placeholder="예: 단어 100개 암기"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="form-input"
-              required
-            />
-          </label>
-
           {submitError && <p className="submit-error">{submitError}</p>}
 
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={onClose}>취소</button>
             <button type="submit" className="btn-submit" disabled={submitting}>
-              {submitting ? '저장 중...' : '저장'}
+              {submitting ? '만드는 중...' : '계획 만들기'}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
