@@ -1,19 +1,19 @@
-import api from './axios';
+import request from './client'
 
 export const getGoals = () =>
-  api.get('/api/goals');
+  request('/api/goals')
 
 export const getGoal = (id) =>
-  api.get(`/api/goals/${id}`);
+  request(`/api/goals/${id}`)
 
 export const createGoal = (data) =>
-  api.post('/api/goals', data);
+  request('/api/goals', { method: 'POST', body: JSON.stringify(data) })
 
 export const updateGoal = (id, data) =>
-  api.put(`/api/goals/${id}`, data);
+  request(`/api/goals/${id}`, { method: 'PUT', body: JSON.stringify(data) })
 
 export const deleteGoal = (id) =>
-  api.delete(`/api/goals/${id}`);
+  request(`/api/goals/${id}`, { method: 'DELETE' })
 
 export const getGoalProgress = (id) =>
-  api.get(`/api/goals/${id}/progress`);
+  request(`/api/goals/${id}/progress`)

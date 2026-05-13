@@ -1,5 +1,5 @@
 async function request(path, options = {}) {
-  const token = localStorage.getItem('accessToken')
+  const token = localStorage.getItem('token')
   const headers = { 'Content-Type': 'application/json', ...options.headers }
   if (token) headers.Authorization = `Bearer ${token}`
 
@@ -12,7 +12,8 @@ async function request(path, options = {}) {
     err.status = res.status
     throw err
   }
-  return res.json()
+  const body = await res.json()
+  return body.data ?? body
 }
 
 export default request
