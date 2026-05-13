@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getGoal, getGoalProgress } from '../api/goals';
+import { getGoal, getGoalProgress, getGoalPlans } from '../api/goals';
 import { MOCK_GOALS, MOCK_PROGRESS } from '../api/mock';
 import './GoalDetailPage.css';
 
@@ -15,6 +15,7 @@ export default function GoalDetailPage() {
   const navigate = useNavigate();
   const [goal, setGoal] = useState(null);
   const [progress, setProgress] = useState(null);
+  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,14 +24,20 @@ export default function GoalDetailPage() {
       if (!found) { navigate('/goals'); return; }
       setGoal(found);
       setProgress(MOCK_PROGRESS[Number(id)] ?? { totalTasks: 0, completedTasks: 0, progressPercent: 0 });
+      setPlans([]); // 모의 데이터에서는 빈 배열
       setLoading(false);
       return;
     }
     async function fetchData() {
       try {
-        const [goalRes, progressRes] = await Promise.all([getGoal(id), getGoalProgress(id)]);
+        const [goalRes, progressRes, plansRes] = await Promise.all([
+          getGoal(id),
+          getGoalProgress(id),
+          getGoalPlans(id)
+        ]);
         setGoal(goalRes.data.data);
         setProgress(progressRes.data.data);
+        setPlans(plansRes.data.data);
       } catch {
         navigate('/goals');
       } finally {
@@ -114,6 +121,26 @@ export default function GoalDetailPage() {
           </div>
         </div>
       )}
+
+      {/* 연관된 하루 계획 목록 */}
+      <div className="detail-plans-card">
+        <h2>연관된 하루 계획</h2>
+        {plans.length === 0 ? (
+          <p className="no-plans">이 목표에 연결된 계획이 없습니다.</p>
+        ) : (
+          <ul className="goal-plans-list">
+            {plans.map((plan) => (
+              <li key={plan.id} className="goal-plan-item" onClick={() => navigate('/daily-plan')}>
+                <span className="plan-date">📅 {plan.date}</span>
+                <span className="plan-go-icon">→</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <button className="add-plan-btn" onClick={() => navigate('/daily-plan', { state: { prefilledGoalId: goal.id } })}>
+          + 새 하루 계획 만들기
+        </button>
+      </div>
     </div>
   );
 }

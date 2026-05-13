@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getPlanByDate, createPlan, deletePlan } from '../api/dailyPlans';
 import { getGoals } from '../api/goals';
 import DateNavigator from '../components/DateNavigator';
@@ -11,6 +12,9 @@ function toISODate(date) {
 }
 
 export default function DailyPlanPage() {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const prefilledGoalId = state?.prefilledGoalId;
   const [selectedDate, setSelectedDate] = useState(new Date());
   // undefined = 로딩 중, null = 해당 날짜에 plan 없음, object = plan 존재
   const [plan, setPlan] = useState(undefined);
@@ -61,7 +65,12 @@ export default function DailyPlanPage() {
   return (
     <div className="page">
       <header className="page-header">
-        <h1 className="page-title">하루 계획</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {prefilledGoalId && (
+            <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => navigate(-1)}>← 뒤로가기</button>
+          )}
+          <h1 className="page-title">하루 계획</h1>
+        </div>
       </header>
 
       <DateNavigator date={selectedDate} onChange={handleDateChange} />
@@ -100,6 +109,7 @@ export default function DailyPlanPage() {
           goals={goals}
           onCreated={handlePlanCreated}
           onClose={() => setShowForm(false)}
+          prefilledGoalId={prefilledGoalId}
         />
       )}
     </div>

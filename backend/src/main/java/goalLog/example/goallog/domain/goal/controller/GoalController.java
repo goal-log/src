@@ -1,6 +1,7 @@
 package goalLog.example.goallog.domain.goal.controller;
 
 import goalLog.example.goallog.domain.goal.dto.*;
+import goalLog.example.goallog.domain.plan.dto.PlanResponse;
 import goalLog.example.goallog.domain.goal.service.GoalService;
 import goalLog.example.goallog.global.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +59,12 @@ public class GoalController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long id) {
         return ApiResponse.success(goalService.getProgress(userDetails.getUsername(), id));
+    }
+
+    @GetMapping("/{id}/plans")
+    public ApiResponse<List<PlanResponse>> getPlans(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+        return ApiResponse.success(goalService.getPlans(userDetails.getUsername(), id));
     }
 }

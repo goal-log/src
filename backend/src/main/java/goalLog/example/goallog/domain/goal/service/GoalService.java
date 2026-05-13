@@ -1,6 +1,7 @@
 package goalLog.example.goallog.domain.goal.service;
 
 import goalLog.example.goallog.domain.goal.dto.*;
+import goalLog.example.goallog.domain.plan.dto.PlanResponse;
 import goalLog.example.goallog.domain.goal.entity.LongTermGoal;
 import goalLog.example.goallog.domain.goal.repository.LongTermGoalRepository;
 import goalLog.example.goallog.domain.plan.entity.DailyPlan;
@@ -89,6 +90,15 @@ public class GoalService {
 
         int percent = totalTasks == 0 ? 0 : (int) (completedTasks * 100 / totalTasks);
         return new GoalProgressResponse(totalTasks, completedTasks, percent);
+    }
+
+    // 목표에 연결된 플랜 목록 조회
+    @Transactional(readOnly = true)
+    public List<PlanResponse> getPlans(String email, Long goalId) {
+        getGoal(email, goalId); // 본인 목표인지 확인
+        return dailyPlanRepository.findByLongTermGoalId(goalId).stream()
+                .map(PlanResponse::new)
+                .toList();
     }
 
     // 목표 조회 + 본인 소유 확인
