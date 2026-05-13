@@ -9,7 +9,6 @@ import goalLog.example.goallog.domain.plan.repository.DailyPlanRepository;
 import goalLog.example.goallog.domain.task.dto.TaskCreateRequest;
 import goalLog.example.goallog.domain.task.dto.TaskResponse;
 import goalLog.example.goallog.domain.task.entity.Task;
-
 import goalLog.example.goallog.domain.task.repository.TaskRepository;
 import goalLog.example.goallog.domain.user.entity.User;
 import goalLog.example.goallog.domain.user.repository.UserRepository;
@@ -31,78 +30,71 @@ public class PlanService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    // 플랜 생성
     @Transactional
     public PlanResponse create(String email, PlanCreateRequest request) {
         User user = getUser(email);
 
-        // 같은 날짜에 플랜이 이미 있으면 그냥 반환
-        return planRepository.findByUserAndDate(user, request.getDate())
-                .map(PlanResponse::new)
+        DailyPlan plan = planRepository.findByUserAndDate(user, request.getDate())
                 .orElseGet(() -> {
                     LongTermGoal goal = null;
                     if (request.getLongTermGoalId() != null) {
                         goal = goalRepository.findById(request.getLongTermGoalId())
                                 .orElseThrow(() -> new CustomException(ErrorCode.GOAL_NOT_FOUND));
                     }
-
-                    DailyPlan plan = DailyPlan.builder()
+                    return planRepository.save(DailyPlan.builder()
                             .user(user)
                             .longTermGoal(goal)
                             .date(request.getDate())
-                            .build();
-
-                    return new PlanResponse(planRepository.save(plan));
+                            .build());
                 });
+
+        return new PlanResponse(plan, taskRepository.findByDailyPlan(plan));
     }
 
-    // 날짜로 플랜 조회
     @Transactional(readOnly = true)
     public PlanResponse getByDate(String email, LocalDate date) {
         User user = getUser(email);
         DailyPlan plan = planRepository.findByUserAndDate(user, date)
                 .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
-        return new PlanResponse(plan);
+        return new PlanResponse(plan, taskRepository.findByDailyPlan(plan));
     }
 
-    // 내 플랜 전체 조회
+    @Transactional(readOnly = true)
+    public PlanResponse getById(String email, Long planId) {
+        DailyPlan plan = getPlan(email, planId);
+        return new PlanResponse(plan, taskRepository.findByDailyPlan(plan));
+    }
+
     @Transactional(readOnly = true)
     public List<PlanResponse> getAll(String email) {
         User user = getUser(email);
         return planRepository.findByUser(user).stream()
-                .map(PlanResponse::new)
+                .map(plan -> new PlanResponse(plan, taskRepository.findByDailyPlan(plan)))
                 .toList();
     }
 
-    // 플랜 삭제
     @Transactional
     public void delete(String email, Long planId) {
         DailyPlan plan = getPlan(email, planId);
         planRepository.delete(plan);
     }
 
-    // 태스크 추가
     @Transactional
     public TaskResponse addTask(String email, Long planId, TaskCreateRequest request) {
         DailyPlan plan = getPlan(email, planId);
-
         Task task = Task.builder()
                 .dailyPlan(plan)
                 .title(request.getTitle())
                 .build();
-
         return new TaskResponse(taskRepository.save(task));
     }
 
-    // 플랜 조회 + 본인 소유 확인
     private DailyPlan getPlan(String email, Long planId) {
         DailyPlan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PLAN_NOT_FOUND));
-
         if (!plan.getUser().getEmail().equals(email)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-
         return plan;
     }
 

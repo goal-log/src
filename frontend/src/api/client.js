@@ -12,7 +12,8 @@ async function request(path, options = {}) {
     err.status = res.status
     throw err
   }
-  return res.json()
+  const body = await res.json()
+  return body.data ?? body
 }
 
 export default request
