@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { createTask, toggleTask, deleteTask } from '../api/tasks';
+import { useState, useEffect } from 'react';
+import { getPlanTasks, createTask, toggleTask, deleteTask } from '../api/tasks';
 import ProgressBar from './ProgressBar';
 import TaskItem from './TaskItem';
 import './DailyPlanCard.css';
@@ -8,6 +8,14 @@ export default function DailyPlanCard({ plan, goalTitle, onDelete }) {
   const [tasks, setTasks] = useState([]);
   const [newTitle, setNewTitle] = useState('');
   const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    if (plan?.id) {
+      getPlanTasks(plan.id)
+        .then((data) => setTasks(data || []))
+        .catch(() => {});
+    }
+  }, [plan?.id]);
 
   const pendingTasks = tasks.filter((t) => !t.completed);
   const doneTasks = tasks.filter((t) => t.completed);

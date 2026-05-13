@@ -94,6 +94,15 @@ public class PlanService {
         return new TaskResponse(taskRepository.save(task));
     }
 
+    // 플랜의 태스크 목록 조회
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getTasks(String email, Long planId) {
+        DailyPlan plan = getPlan(email, planId);
+        return taskRepository.findByDailyPlan(plan).stream()
+                .map(TaskResponse::new)
+                .toList();
+    }
+
     // 플랜 조회 + 본인 소유 확인
     private DailyPlan getPlan(String email, Long planId) {
         DailyPlan plan = planRepository.findById(planId)

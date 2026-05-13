@@ -60,4 +60,12 @@ public class PlanController {
         return ApiResponse.success(planService.addTask(userDetails.getUsername(), planId, request));
     }
 
+    // 플랜의 태스크 목록 조회
+    @GetMapping("/{planId}/tasks")
+    public ApiResponse<List<TaskResponse>> getTasks(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long planId) {
+        return ApiResponse.success(planService.getTasks(userDetails.getUsername(), planId));
+    }
+
 }
