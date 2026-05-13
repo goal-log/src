@@ -8,5 +8,8 @@ export const getDailyPlans = (params = {}) => {
 export const createDailyPlan = (data) =>
   request('/api/daily-plans', { method: 'POST', body: JSON.stringify(data) })
 
+export const completeDailyPlan = (id) =>
+  request(`/api/daily-plans/${id}/complete`, { method: 'PATCH' })
+
 export const deleteDailyPlan = (id) =>
   request(`/api/daily-plans/${id}`, { method: 'DELETE' })
