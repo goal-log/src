@@ -52,7 +52,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p style={styles.link}>
-          계정이 없으신가요? <Link to="/signup">회원가입</Link>
+          계정이 없으신가요? <Link to="/signup" style={{ color: '#4f46e5', fontWeight: 600 }}>회원가입</Link>
         </p>
       </div>
     </div>
