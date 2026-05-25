@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+// [GRASP: Information Expert] - Task 완료 상태 변경에 필요한 정보(Task 엔티티)를 가장 잘 알고 있어 이 책임을 맡는다.
+// [GRASP: Don't Talk to Strangers] - DailyPlan, User에 직접 접근하지 않고 Task를 통해서만 소유자를 확인한다.
 @Service
 @RequiredArgsConstructor
 public class TaskService {
