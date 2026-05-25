@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getPlanByDate, createPlan, deletePlan } from '../api/dailyPlans';
+import { getPlanByDate, deletePlan } from '../api/dailyPlans';
 import { getGoals } from '../api/goals';
+import Navbar from '../components/Navbar';
 import DateNavigator from '../components/DateNavigator';
 import DailyPlanCard from '../components/DailyPlanCard';
 import DailyPlanForm from '../components/DailyPlanForm';
@@ -16,8 +17,7 @@ export default function DailyPlanPage() {
   const navigate = useNavigate();
   const prefilledGoalId = state?.prefilledGoalId;
   const [selectedDate, setSelectedDate] = useState(new Date());
-  // undefined = 로딩 중, null = 해당 날짜에 plan 없음, object = plan 존재
-  const [plan, setPlan] = useState(undefined);
+  const [plans, setPlans] = useState([]);
   const [goals, setGoals] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,94 +25,97 @@ export default function DailyPlanPage() {
 
   useEffect(() => {
     getGoals()
-      .then((res) => setGoals(res.data.data ?? []))
-      .catch(() => {});
+      .then((res) => setGoals(res.data ?? []))
+      .catch(() => navigate('/login'));
   }, []);
 
-  const fetchPlan = useCallback(() => {
+  const fetchPlans = useCallback(() => {
     setLoading(true);
     setError(null);
-    setPlan(undefined);
     getPlanByDate(toISODate(selectedDate))
-      .then(setPlan)
+      .then((data) => setPlans(data))
       .catch(() => setError('데이터를 불러오지 못했습니다. 다시 시도해주세요.'))
       .finally(() => setLoading(false));
   }, [selectedDate]);
 
   useEffect(() => {
-    fetchPlan();
-  }, [fetchPlan]);
-
-  function handleDateChange(newDate) {
-    setSelectedDate(newDate);
-  }
+    fetchPlans();
+  }, [fetchPlans]);
 
   function handlePlanCreated(newPlan) {
-    setPlan(newPlan);
+    setPlans((prev) => [...prev, newPlan]);
     setShowForm(false);
   }
 
-  function handleDeletePlan() {
-    deletePlan(plan.id)
-      .then(() => setPlan(null))
+  function handleDeletePlan(planId) {
+    if (!window.confirm('이 계획을 삭제할까요?')) return;
+    deletePlan(planId)
+      .then(() => setPlans((prev) => prev.filter((p) => p.id !== planId)))
       .catch(() => {});
   }
 
-  const goalTitle = plan?.longTermGoalId
-    ? (goals.find((g) => g.id === plan.longTermGoalId)?.title ?? null)
-    : null;
+  function getGoalTitle(plan) {
+    if (!plan?.longTermGoalId) return null;
+    return goals.find((g) => g.id === plan.longTermGoalId)?.title ?? null;
+  }
 
   return (
-    <div className="page">
-      <header className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {prefilledGoalId && (
-            <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => navigate(-1)}>← 뒤로가기</button>
+    <div className="app-layout">
+      <Navbar />
+      <div className="page">
+        {prefilledGoalId && (
+          <button className="back-btn" onClick={() => navigate(-1)}>← 뒤로가기</button>
+        )}
+
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
+
+        <div className="page-content">
+          {loading && <p className="page-status">불러오는 중...</p>}
+
+          {error && (
+            <div className="page-error">
+              <p>{error}</p>
+              <button className="retry-btn" onClick={fetchPlans}>다시 시도</button>
+            </div>
           )}
-          <h1 className="page-title">하루 계획</h1>
-        </div>
-      </header>
 
-      <DateNavigator date={selectedDate} onChange={handleDateChange} />
+          {!loading && !error && plans.length === 0 && (
+            <div className="empty-state">
+              <div className="empty-icon">📋</div>
+              <p className="empty-text">이 날의 계획이 없어요.</p>
+              <p className="empty-sub">목표를 향한 오늘의 할 일을 만들어보세요.</p>
+              <button className="add-plan-btn-empty" onClick={() => setShowForm(true)}>
+                + 계획 만들기
+              </button>
+            </div>
+          )}
 
-      <div className="page-content">
-        {loading && <p className="page-status">불러오는 중...</p>}
+          {!loading && !error && plans.map((plan) => (
+            <DailyPlanCard
+              key={plan.id}
+              plan={plan}
+              goalTitle={getGoalTitle(plan)}
+              onDelete={() => handleDeletePlan(plan.id)}
+            />
+          ))}
 
-        {error && (
-          <div className="page-error">
-            <p>{error}</p>
-            <button className="retry-btn" onClick={fetchPlan}>다시 시도</button>
-            <button className="retry-btn" onClick={fetchPlan}>다시 시도</button>
-          </div>
-        )}
-
-        {!loading && !error && plan === null && (
-          <div className="empty-state">
-            <p>이 날의 계획이 없습니다.</p>
-            <button className="add-plan-btn-empty" onClick={() => setShowForm(true)}>
-              + 계획 만들기
+          {!loading && !error && plans.length > 0 && (
+            <button className="add-more-btn" onClick={() => setShowForm(true)}>
+              + 다른 목표의 계획 추가
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {!loading && !error && plan && (
-          <DailyPlanCard
-            plan={plan}
-            goalTitle={goalTitle}
-            onDelete={handleDeletePlan}
+        {showForm && (
+          <DailyPlanForm
+            date={toISODate(selectedDate)}
+            goals={goals}
+            onCreated={handlePlanCreated}
+            onClose={() => setShowForm(false)}
+            prefilledGoalId={prefilledGoalId}
           />
         )}
       </div>
-
-      {showForm && (
-        <DailyPlanForm
-          date={toISODate(selectedDate)}
-          goals={goals}
-          onCreated={handlePlanCreated}
-          onClose={() => setShowForm(false)}
-          prefilledGoalId={prefilledGoalId}
-        />
-      )}
     </div>
   );
 }

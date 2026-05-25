@@ -13,4 +13,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// 응답에서 data만 추출
+api.interceptors.response.use((response) => response.data);
+
 export default api;
