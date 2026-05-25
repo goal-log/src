@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface DailyPlanRepository extends JpaRepository<DailyPlan, Long> {
 
-    // 특정 유저의 특정 날짜 플랜 조회
-    Optional<DailyPlan> findByUserAndDate(User user, LocalDate date);
+    // 특정 유저의 특정 날짜 플랜 전체 조회
+    List<DailyPlan> findByUserAndDate(User user, LocalDate date);
 
     // 특정 유저의 플랜 전체 조회
     List<DailyPlan> findByUser(User user);

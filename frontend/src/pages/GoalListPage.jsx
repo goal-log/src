@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getGoals, createGoal, updateGoal, deleteGoal } from '../api/goals';
+import { getGoals, createGoal, updateGoal, deleteGoal, getGoalProgress } from '../api/goals';
 import { MOCK_GOALS, MOCK_PROGRESS, CATEGORIES, PRIORITIES, STATUSES } from '../api/mock';
+import Navbar from '../components/Navbar';
 import './GoalListPage.css';
 
 const MOCK_MODE = false;
@@ -85,7 +86,17 @@ export default function GoalListPage() {
   async function fetchGoals() {
     try {
       const data = await getGoals();
-      setGoals(Array.isArray(data) ? data : []);
+      const goalList = Array.isArray(data.data) ? data.data : [];
+      setGoals(goalList);
+
+      const progressEntries = await Promise.all(
+        goalList.map((g) =>
+          getGoalProgress(g.id)
+            .then((res) => [g.id, res.data])
+            .catch(() => [g.id, { totalTasks: 0, completedTasks: 0, progressPercent: 0 }])
+        )
+      );
+      setProgressMap(Object.fromEntries(progressEntries));
     } catch {
       navigate('/login');
     } finally {
@@ -130,7 +141,7 @@ export default function GoalListPage() {
     setFormError('');
     if (!form.title.trim()) { setFormError('제목을 입력해주세요.'); return; }
     try {
-      const newGoal = await createGoal(form);
+      const newGoal = (await createGoal(form)).data;
       setGoals([...goals, newGoal]);
       setProgressMap({ ...progressMap, [newGoal.id]: { totalTasks: 0, completedTasks: 0, progressPercent: 0 } });
       setForm(EMPTY_FORM);
@@ -153,7 +164,7 @@ export default function GoalListPage() {
     e.preventDefault();
     if (!editForm.title.trim()) return;
     try {
-      const updated = await updateGoal(id, editForm);
+      const updated = (await updateGoal(id, editForm)).data;
       setGoals(goals.map(g => g.id === id ? updated : g));
       setEditingId(null);
     } catch {
@@ -175,18 +186,14 @@ export default function GoalListPage() {
 
   return (
     <div className="page-layout">
+      <Navbar />
 
       {/* 헤더 */}
       <div className="page-header">
         <h1>🎯 장기 목표</h1>
-        <div className="header-actions">
-          <button className="btn-outline" onClick={() => { localStorage.removeItem('token'); navigate('/login'); }}>
-            로그아웃
-          </button>
-          <button className="btn-add" onClick={() => { setShowForm(true); setFormError(''); }}>
-            + 목표 추가
-          </button>
-        </div>
+        <button className="btn-add" onClick={() => { setShowForm(true); setFormError(''); }}>
+          + 목표 추가
+        </button>
       </div>
 
       {/* 통계 */}
@@ -351,7 +358,7 @@ export default function GoalListPage() {
             </div>
           ) : (
             /* 일반 카드 */
-            <div className={`goal-card status-${goal.status.toLowerCase()}`} key={goal.id}>
+            <div className={`goal-card status-${goal.status?.toLowerCase() ?? ''}`} key={goal.id}>
               <div className="card-top">
                 <div className="card-badges">
                   <span className="badge-category">{goal.category}</span>

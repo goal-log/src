@@ -30,7 +30,7 @@ public class PlanController {
     }
 
     @GetMapping
-    public ApiResponse<PlanResponse> getByDate(
+    public ApiResponse<List<PlanResponse>> getByDate(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ApiResponse.success(planService.getByDate(userDetails.getUsername(), date));
