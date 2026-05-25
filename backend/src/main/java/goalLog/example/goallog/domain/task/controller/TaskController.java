@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+// [GRASP: Controller] - 시스템 이벤트(HTTP 요청)를 수신하여 TaskService에 위임한다.
+// [GRASP: Don't Talk to Strangers] - Repository, Entity를 직접 참조하지 않고 TaskService에만 의존한다.
 @RestController
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor

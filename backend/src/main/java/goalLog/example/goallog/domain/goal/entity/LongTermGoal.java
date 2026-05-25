@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// [GRASP: Information Expert] - 목표 자신의 상태(title, deadline, priority, status)를 가장 잘 알고 있으므로
+//   update() 메서드를 통해 자신의 데이터를 직접 변경하는 책임을 갖는다.
 @Entity
 @Table(name = "long_term_goals")
 @Getter

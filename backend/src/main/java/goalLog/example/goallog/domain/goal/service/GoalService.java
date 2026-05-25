@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+// [GRASP: High Cohesion] - 장기 목표 도메인에 관련된 기능(CRUD, 진행률, 플랜 조회)만 담당한다.
+// [GRASP: Low Coupling] - UserRepository, GoalRepository 등 필요한 의존성만 주입받아 사용한다.
 @Service
 @RequiredArgsConstructor
 public class GoalService {
@@ -26,7 +28,7 @@ public class GoalService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    // 목표 생성
+    // [GRASP: Creator] - GoalService가 LongTermGoal 생성에 필요한 User 정보를 알고 있으므로 생성 책임을 갖는다.
     @Transactional
     public GoalResponse create(String email, GoalCreateRequest request) {
         User user = getUser(email);
@@ -76,7 +78,7 @@ public class GoalService {
         goalRepository.delete(goal);
     }
 
-    // 목표 진행률 조회
+    // [GRASP: Information Expert] - 목표 진행률 계산에 필요한 플랜·태스크 정보를 가장 잘 알고 있으므로 이 책임을 맡는다.
     @Transactional(readOnly = true)
     public GoalProgressResponse getProgress(String email, Long goalId) {
         getGoal(email, goalId); // 본인 목표인지 확인

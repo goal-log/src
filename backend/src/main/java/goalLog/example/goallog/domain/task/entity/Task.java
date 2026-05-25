@@ -47,7 +47,7 @@ public class Task {
         this.completed = false;
     }
 
-    // 완료 상태를 반전시키는 메서드 - toggle API에서 호출
+    // [GRASP: Information Expert] - Task 자신이 completed 상태를 알고 있으므로 직접 반전시키는 책임을 갖는다.
     public void toggleCompleted() {
         this.completed = !this.completed;
     }
