@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'goalLog.example'
@@ -36,6 +37,50 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+sourceSets {
+	test {
+		java {
+			srcDirs += [
+				'../test/test-001',
+				'../test/test-002',
+				'../test/test-003',
+				'../test/test-004',
+				'../test/test-005',
+				'../test/test-006'
+			]
+		}
+		resources {
+			srcDirs += ['../test/resources']
+		}
+	}
+}
+
+jacoco {
+	toolVersion = '0.8.12'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
+}
+
+tasks.named('jacocoTestReport') {
+	dependsOn tasks.named('test')
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+	dependsOn tasks.named('test')
+	violationRules {
+		rule {
+			limit {
+				counter = 'INSTRUCTION'
+				minimum = 0.80
+			}
+		}
+	}
 }
