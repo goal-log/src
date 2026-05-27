@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,12 +22,27 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup(email, password);
-      navigate('/login');
+      setSuccess(true);
     } catch (err) {
       setError(err.response?.data?.message || '회원가입에 실패했습니다.');
     } finally {
       setLoading(false);
     }
+  }
+
+  if (success) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card signup-success-card">
+          <div className="signup-success-icon">✓</div>
+          <h2 className="signup-success-title">회원가입 완료!</h2>
+          <p className="signup-success-msg">GoalLog에 오신 것을 환영합니다.<br />지금 바로 목표를 시작해보세요.</p>
+          <button className="auth-btn" onClick={() => navigate('/login')}>
+            로그인하러 가기
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
