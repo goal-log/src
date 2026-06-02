@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { signup } from '../api/auth';
 import './SignupPage.css';
 
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
 export default function SignupPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -12,9 +14,15 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const passwordValid = PASSWORD_REGEX.test(password);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
+    if (!passwordValid) {
+      setError('비밀번호는 8자 이상이며 영문자, 숫자, 특수문자를 모두 포함해야 합니다.');
+      return;
+    }
     if (password !== confirm) {
       setError('비밀번호가 일치하지 않습니다.');
       return;
@@ -68,12 +76,19 @@ export default function SignupPage() {
             <label className="input-label">비밀번호</label>
             <input
               type="password"
-              placeholder="8자 이상 입력해주세요"
+              placeholder="영문자, 숫자, 특수문자 포함 8자 이상"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="auth-input"
+              className={`auth-input${password && !passwordValid ? ' input-error' : ''}`}
               required
             />
+            <p className="input-hint">8자 이상, 영문자·숫자·특수문자(!@#$ 등) 모두 포함</p>
+            {password && !passwordValid && (
+              <p className="input-hint error">비밀번호 형식이 올바르지 않습니다.</p>
+            )}
+            {password && passwordValid && (
+              <p className="input-hint success">사용 가능한 비밀번호입니다.</p>
+            )}
           </div>
 
           <div className="input-group">

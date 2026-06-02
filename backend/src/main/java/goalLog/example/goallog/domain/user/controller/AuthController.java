@@ -5,6 +5,7 @@ import goalLog.example.goallog.domain.user.dto.LoginResponse;
 import goalLog.example.goallog.domain.user.dto.SignupRequest;
 import goalLog.example.goallog.domain.user.service.AuthService;
 import goalLog.example.goallog.global.common.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ApiResponse<Void> signup(@RequestBody SignupRequest request) {
+    public ApiResponse<Void> signup(@Valid @RequestBody SignupRequest request) {
         authService.signup(request);
         return ApiResponse.success(null);
     }
