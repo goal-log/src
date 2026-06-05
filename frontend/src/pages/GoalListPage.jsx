@@ -315,6 +315,7 @@ export default function GoalListPage() {
 
         {filtered.map(goal => {
           const prog = progressMap[goal.id] ?? { totalTasks: 0, completedTasks: 0, progressPercent: 0 };
+          const displayPercent = goal.status === 'COMPLETED' ? 100 : displayPercent;
           const progCls = goal.status === 'COMPLETED' ? 'completed' : goal.status === 'PAUSED' ? 'paused' : '';
 
           return editingId === goal.id ? (
@@ -371,11 +372,11 @@ export default function GoalListPage() {
               </div>
 
               <div className="card-progress">
-                <ProgressRing percent={prog.progressPercent} status={goal.status} />
+                <ProgressRing percent={displayPercent} status={goal.status} />
                 <div className="progress-info">
-                  <p className="progress-pct">{prog.progressPercent}% 달성</p>
+                  <p className="progress-pct">{displayPercent}% 달성</p>
                   <div className="progress-bar-track">
-                    <div className={`progress-bar-fill ${progCls}`} style={{ width: `${prog.progressPercent}%` }} />
+                    <div className={`progress-bar-fill ${progCls}`} style={{ width: `${displayPercent}%` }} />
                   </div>
                   <p className="task-count">{prog.completedTasks} / {prog.totalTasks} 태스크</p>
                 </div>
