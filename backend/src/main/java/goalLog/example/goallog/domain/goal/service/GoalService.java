@@ -75,6 +75,11 @@ public class GoalService {
     @Transactional
     public void delete(String email, Long goalId) {
         LongTermGoal goal = getGoal(email, goalId);
+        List<DailyPlan> plans = dailyPlanRepository.findByLongTermGoalId(goalId);
+        for (DailyPlan plan : plans) {
+            taskRepository.deleteAll(taskRepository.findByDailyPlan(plan));
+        }
+        dailyPlanRepository.deleteAll(plans);
         goalRepository.delete(goal);
     }
 

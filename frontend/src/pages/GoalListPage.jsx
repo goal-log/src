@@ -109,8 +109,9 @@ export default function GoalListPage() {
     const total = goals.length;
     const completed = goals.filter(g => g.status === 'COMPLETED').length;
     const inProgress = goals.filter(g => g.status === 'IN_PROGRESS').length;
-    const avgProgress = total === 0 ? 0 :
-      Math.round(Object.values(progressMap).reduce((s, p) => s + p.progressPercent, 0) / total);
+    const totalTasks = Object.values(progressMap).reduce((s, p) => s + p.totalTasks, 0);
+    const completedTasks = Object.values(progressMap).reduce((s, p) => s + p.completedTasks, 0);
+    const avgProgress = totalTasks === 0 ? 0 : Math.round(completedTasks / totalTasks * 100);
     return { total, completed, inProgress, avgProgress };
   }, [goals, progressMap]);
 

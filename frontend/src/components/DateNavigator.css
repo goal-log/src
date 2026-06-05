@@ -1,3 +1,10 @@
+.date-navigator-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .date-navigator {
   display: flex;
   align-items: center;
@@ -23,6 +30,20 @@
   color: #111827;
 }
 
+.date-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.date-label-btn:hover {
+  background: #f3f4f6;
+}
+
 .date-label {
   font-size: 18px;
   font-weight: 600;
@@ -34,6 +55,10 @@
   justify-content: center;
 }
 
+.cal-icon {
+  font-size: 16px;
+}
+
 .today-badge {
   font-size: 12px;
   font-weight: 500;
@@ -41,4 +66,116 @@
   color: white;
   padding: 2px 8px;
   border-radius: 12px;
+}
+
+/* 달력 팝업 */
+.cal-popup {
+  position: absolute;
+  top: calc(100% - 8px);
+  z-index: 100;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 16px;
+  width: 280px;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cal-month-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cal-nav {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 18px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.cal-nav:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+  padding: 4px 0;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: 13px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+  cursor: pointer;
+}
+
+.cal-day:hover {
+  background: #f3f4f6;
+}
+
+.cal-day.today {
+  font-weight: 700;
+  color: #4f6ef7;
+}
+
+.cal-day.selected {
+  background: #4f6ef7;
+  color: white;
+  font-weight: 600;
+}
+
+.cal-day.selected.today {
+  color: white;
+}
+
+.cal-footer {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.cal-today-btn {
+  font-size: 13px;
+  color: #4f6ef7;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.cal-today-btn:hover {
+  background: #eff2fe;
 }
