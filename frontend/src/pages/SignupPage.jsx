@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { signup } from '../api/auth';
 import './SignupPage.css';
 
-const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{7,}$/;
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError('');
     if (!passwordValid) {
-      setError('비밀번호는 8자 이상이며 영문자, 숫자, 특수문자를 모두 포함해야 합니다.');
+      setError('비밀번호는 7자 이상이며 영문자, 숫자, 특수문자를 모두 포함해야 합니다.');
       return;
     }
     if (password !== confirm) {
@@ -76,13 +76,13 @@ export default function SignupPage() {
             <label className="input-label">비밀번호</label>
             <input
               type="password"
-              placeholder="영문자, 숫자, 특수문자 포함 8자 이상"
+              placeholder="영문자, 숫자, 특수문자 포함 7자 이상"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`auth-input${password && !passwordValid ? ' input-error' : ''}`}
               required
             />
-            <p className="input-hint">8자 이상, 영문자·숫자·특수문자(!@#$ 등) 모두 포함</p>
+            <p className="input-hint">7자 이상, 영문자·숫자·특수문자(!@#$ 등) 모두 포함</p>
             {password && !passwordValid && (
               <p className="input-hint error">비밀번호 형식이 올바르지 않습니다.</p>
             )}
