@@ -109,10 +109,8 @@ export default function GoalListPage() {
     const total = goals.length;
     const completed = goals.filter(g => g.status === 'COMPLETED').length;
     const inProgress = goals.filter(g => g.status === 'IN_PROGRESS').length;
-    const totalTasks = Object.values(progressMap).reduce((s, p) => s + p.totalTasks, 0);
-    const completedTasks = Object.values(progressMap).reduce((s, p) => s + p.completedTasks, 0);
-    const avgProgress = totalTasks === 0 ? 0 : Math.round(completedTasks / totalTasks * 100);
-    return { total, completed, inProgress, avgProgress };
+    const achieveRate = total === 0 ? 0 : Math.round(completed / total * 100);
+    return { total, completed, inProgress, achieveRate };
   }, [goals, progressMap]);
 
   // 필터 + 정렬
@@ -215,9 +213,8 @@ export default function GoalListPage() {
           <span className="stat-sub">개</span>
         </div>
         <div className="stat-card accent-red">
-          <span className="stat-label">평균 진행률</span>
-          <span className="stat-value">{stats.avgProgress}%</span>
-          <span className="stat-sub">전체 평균</span>
+          <span className="stat-label">달성률</span>
+          <span className="stat-value">{stats.achieveRate}%</span>
         </div>
       </div>
 
