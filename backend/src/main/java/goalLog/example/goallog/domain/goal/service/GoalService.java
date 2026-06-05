@@ -86,7 +86,7 @@ public class GoalService {
     // [GRASP: Information Expert] - 목표 진행률 계산에 필요한 플랜·태스크 정보를 가장 잘 알고 있으므로 이 책임을 맡는다.
     @Transactional(readOnly = true)
     public GoalProgressResponse getProgress(String email, Long goalId) {
-        getGoal(email, goalId); // 본인 목표인지 확인
+        LongTermGoal goal = getGoal(email, goalId);
 
         List<DailyPlan> plans = dailyPlanRepository.findByLongTermGoalId(goalId);
 
@@ -99,7 +99,12 @@ public class GoalService {
             completedTasks += taskRepository.countByDailyPlanAndCompletedTrue(plan);
         }
 
-        int percent = totalTasks == 0 ? 0 : (int) (completedTasks * 100 / totalTasks);
+        int percent;
+        if (goal.getStatus().equals("COMPLETED")) {
+            percent = 100;
+        } else {
+            percent = totalTasks == 0 ? 0 : (int) (completedTasks * 100 / totalTasks);
+        }
         return new GoalProgressResponse(totalTasks, completedTasks, percent);
     }
 
